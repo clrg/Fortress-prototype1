@@ -1,8 +1,8 @@
 <!-- Copyright 2007 licensed under GPL v3 -->
 
 <vexi xmlns:ui="vexi://ui" xmlns="net.sourceforge.fortress">
-    <ui:box height="100" width="100" layout="absolute">
-        <ui:box layout="absolute">
+    <ui:box height="100" width="100" layout="place">
+        <ui:box align="topleft" layout="place">
             $minimap.width ++= function(v) { cascade = v; width = v; }
             $minimap.height ++= function(v) { cascade = v; height = v; }
             <ui:box id="minimap" shrink="true" />
@@ -24,73 +24,63 @@
         var vw = 1;
         var vh = 1;
         
-        var syncView = function()
-        {
+        var syncView = function() {
             $viewbox.width = $minimap.width * (vw / mw) + 1;
             $viewbox.height = $minimap.height * (vh / mh) + 1;
             $viewbox.x = $minimap.width * (-mx / mw);
             $viewbox.y = $minimap.height * (-my / mh);
         }
         
-        var moveMapFunc = function(v)
-        {
-            vexi.log.info(v);
+        var moveMapFunc = function(v) {
+            cascade = v;
             // assumes minimap tiles are 1px by 1px
             surface.moveMapTo(mouse.x, mouse.y);
+        }
+        
+        var releaseFunc = function(v) {
             cascade = v;
-        }
-        
-        var releaseFunc = function(v)
-        {
             Move --= moveMapFunc;
-            surface.Focused --= releaseFunc;
-            surface._Release1 --= releaseFunc;
+            surface.frame.Focused --= releaseFunc;
+            surface.event._Release1 --= releaseFunc;
         }
         
-        var pressFunc = function(v)
-        {
+        var pressFunc = function(v) {
+            cascade = v;
             Move ++= moveMapFunc;
-            surface.Focused ++= releaseFunc;
-            surface._Release1 ++= releaseFunc;
+            surface.frame.Focused ++= releaseFunc;
+            surface.event._Release1 ++= releaseFunc;
         }
         
         thisbox.Press1 ++= pressFunc;
         
-        surface ++= function(v)
-        {
+        surface ++= function(v) {
             cascade = v;
             
-            surface.setMapBox = function(_vw, _vh)
-            {
+            surface.setMapBox = function(_vw, _vh) {
                 vw = _vw;
                 vh = _vh;
                 syncView();
             }
             
-            surface.setMapDim = function(_mw, _mh)
-            {
+            surface.setMapDim = function(_mw, _mh) {
                 mw = _mw;
                 mh = _mh;
                 syncView();
             }
             
-            surface.setMapPos = function(_mx, _my)
-            {
+            surface.setMapPos = function(_mx, _my) {
                 mx = _mx;
                 my = _my;
                 syncView();
             }
             
-            surface.setMapContents = function(map)
-            {
+            surface.setMapContents = function(map) {
                 var ni = map.numchildren;
                 var nj = map[0].numchildren;
-                for (var i=0; ni > i; i++)
-                {
+                for (var i=0; ni > i; i++) {
                     $minimap[i] = vexi.box;
                     $minimap[i].orient = "vertical";
-                    for (var j=0; nj > j; j++)
-                    {
+                    for (var j=0; nj > j; j++) {
                         var t = .minimaptile(vexi.box);
                         t.Press1 ++= moveMapFunc;
                         t.setType(map[i][j].type, map[i][j].seed);
@@ -99,8 +89,7 @@
                 }
             }
             
-            surface.setMapTile = function(t)
-            {
+            surface.setMapTile = function(t) {
                 $minimap[t.posx][t.posy].setType(t.type, t.seed);
             }
         }
