@@ -1,8 +1,18 @@
-{
-  "source" : [
-    "F/fortress-prototype1/src",
-    "LVexi Game Library",
-    "LVexi Platform"
-  ],
-  "projects" : [ ]
-}
+<project-path>
+   <main>
+      <sources>
+         <source-dir path="src"/>
+      </sources>
+      <dependencies>
+         <path-entry type="library" name="Widgets"/>
+      </dependencies>
+   </main>
+   <test>
+      <sources/>
+      <dependencies/>
+   </test>
+   <poke>
+      <sources/>
+      <dependencies/>
+   </poke>
+</project-path>
